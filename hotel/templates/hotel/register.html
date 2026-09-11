@@ -1,0 +1,40 @@
+{% extends 'hotel/base.html' %}
+{% block title %}ثبت‌نام{% endblock %}
+
+{% block content %}
+<section id="register" class="py-5">
+  <div class="container my-5">
+    <div class="row justify-content-center">
+
+      <!-- 🏷️ Title -->
+      <h2 class="fw-bold text-center text-brown mb-4">ثبت‌نام در سهند کندوان</h2>
+      <p class="text-center text-muted mb-5">برای رزرو اتاق‌های کندوان، ابتدا حساب کاربری خود را ایجاد کنید.</p>
+
+      <!-- 🪶 Register Card -->
+      <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded-4 p-4" style="background: #fff;">
+          <form method="POST" action="{% url 'hotel:register' %}" class="text-center">
+            {% csrf_token %}
+
+            <div class="text-end mb-4" style="direction: rtl;">
+              {{ form.as_p }}
+            </div>
+
+            <!-- 🌟 Submit Button -->
+            <button type="submit" class="btn w-100 fw-semibold custom-btn py-2">
+              ثبت‌نام
+            </button>
+          </form>
+
+          <!-- 🔗 Login Link -->
+          <div class="mt-3 text-center">
+            <small class="text-muted">قبلاً حساب دارید؟
+              <a href="{% url 'hotel:login' %}" class="text-brown fw-semibold">ورود</a>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

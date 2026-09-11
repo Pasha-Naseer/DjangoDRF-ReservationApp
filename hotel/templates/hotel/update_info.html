@@ -1,0 +1,37 @@
+{% extends 'hotel/base.html' %}
+
+{% block content %}
+
+<section id="billboard" class="bg-white py-5" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+  <div class="container">
+    <div class="row justify-content-center">
+      <h1 class="section-title text-center mt-4" data-aos="fade-up"
+          style="color:#333; font-weight:600; letter-spacing:1px;">تغییر اطلاعات حساب</h1>
+      <div class="col-md-6 text-center" data-aos="fade-up" data-aos-delay="300"
+           style="background:#fff; border-radius:12px; padding:30px; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+
+        <strong style="display:block; margin-bottom:15px; font-size:1.1rem; color:#444;">اطلاعات پرداخت</strong>
+        <form method="POST" action="{% url 'hotel:update_info' %}">
+          {% csrf_token %}
+          <div class="text-start">
+            {{ form.as_p }}
+          </div>
+
+          <br/>
+          <strong style="display:block; margin-bottom:15px; font-size:1.1rem; color:#444;">اطلاعات ارسال</strong>
+          <div class="text-start">
+            {{ shipping_form.as_p }}
+          </div>
+
+          <br/>
+          <button type="submit" class="btn btn-dark px-4 py-2"
+                  style="border-radius:8px; font-weight:500;">بروزرسانی</button>
+        </form>
+
+        <br/><br/>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'hotel/base.html' %}
+{% load humanize %}
+{% block title %}رزروهای من{% endblock %}
+
+{% block content %}
+
+<section class="container my-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-brown">رزروهای من</h2>
+        <p class="text-muted">در این بخش می‌توانید وضعیت تمامی رزروهای خود را مشاهده کنید.</p>
+    </div>
+
+    {% if reservations %}
+        <div class="row">
+            {% for reservation in reservations %}
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
+                    <img src="{{ reservation.room.image.url }}"
+                         alt="اقامتگاه گردشگری کندوان خانه های سنگی"
+                         class="card-img-top"
+                         style="height: 220px; object-fit: cover;">
+                    <div class="card-body text-center">
+                        <h5 class="fw-semibold text-brown mb-2">{{ reservation.room.name }}</h5>
+                        <p class="text-muted mb-1">
+                            تاریخ شروع: {{ reservation.calculate_jalali_start }}<br>
+                            تاریخ پایان: {{ reservation.calculate_jalali_end }}
+                        </p>
+
+                        <span class="badge bg-success px-3 py-2 mt-2 rounded-pill">
+                            {{ reservation.total_price|intcomma }}T
+                        </span>
+                        {% if reservation.status == 'P' %}
+                            <span class="badge bg-warning text-dark px-3 py-2 mt-2 rounded-pill">
+                                در حال بررسی
+                            </span>
+                        {% else %}
+                            <span class="badge bg-success px-3 py-2 mt-2 rounded-pill">
+                                تایید شده ✅
+                            </span>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+
+    {% else %}
+        <div class="text-center py-5">
+            <h5 class="text-muted">هیچ رزروی برای شما ثبت نشده است.</h5>
+            <a href="{% url 'hotel:index' %}" class="btn custom-btn mt-3">بازگشت به صفحه اصلی</a>
+        </div>
+    {% endif %}
+
+</section>
+<style>
+    .kandovan-note {
+  background: linear-gradient(135deg, #4e342e, #6d4c41);
+  border: 2px solid #c9a24d;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(78, 52, 46, 0.4);
+  color: #f5f1e8;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 2;
+  font-family: "Vazirmatn", "IRANSans", serif;
+}
+
+.kandovan-note .text-gold {
+  color: #f1c40f;
+  text-shadow: 0 0 6px rgba(241, 196, 15, 0.6);
+}
+</style>
+{% endblock %}

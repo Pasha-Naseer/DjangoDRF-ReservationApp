@@ -1,0 +1,21 @@
+{% extends 'hotel/base.html' %}
+{% block content %}
+
+<section class="py-5 text-center" style="background:#f8f4ee;">
+  <div class="container">
+    <div class="p-5 shadow-lg rounded-3 mx-auto" style="max-width:600px; background:#fff;">
+      <h2 class="mb-4" style="color:#7b5e2d; font-weight:700;">رزرو شما با موفقیت ثبت شد</h2>
+      <p style="color:#5a4630; font-size:1.1rem;">
+        می‌توانید وضعیت رزرو خود را در صفحه زیر مشاهده کنید.
+      </p>
+      <a href="{% url 'hotel:reservation_status' %}"
+         class="btn btn-lg mt-4"
+         style="background:#b88a44; color:#fff; border:none; border-radius:12px; font-weight:600; padding:12px 40px;">
+         مشاهده وضعیت رزرو
+      </a>
+    </div>
+  </div>
+</section>
+
+
+{% endblock %}

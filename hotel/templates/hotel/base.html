@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}سهند کندوان{% endblock %}</title>
+
+    <!-- Bootstrap RTL -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+
+    <!-- Optional Persian font -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #f9fafb;
+            color: #333;
+        }
+        a {
+            text-decoration: none;
+        }
+        .navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        footer {
+            background-color: #fff;
+            border-top: 1px solid #e5e7eb;
+            color: #666;
+        }
+        .text-brown {
+    color: #6b4f2f;
+}
+        footer {
+    background: linear-gradient(135deg, #5c3b23, #8b5e3c);
+    color: #fff;
+    transition: background 0.5s ease;
+}
+footer:hover {
+    background: linear-gradient(135deg, #6b4f2f, #a8744f);
+}
+
+
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body style="padding-top: 80px;">  <!-- ✅ Added padding to prevent overlap -->
+<!-- 🧭 Navbar -->
+<nav class="navbar navbar-expand-lg custom-navbar fixed-top shadow-sm">
+    <div class="container py-2">
+        <a class="navbar-brand fw-semibold text-gold fs-4" href="{% url 'hotel:index' %}">سهند کندوان</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link text-light" href="{% url 'hotel:index' %}">صفحه اصلی</a></li>
+                <li class="nav-item"><a class="nav-link text-light" href="{% url 'hotel:about' %}">درباره ما</a></li>
+            </ul>
+
+            <ul class="navbar-nav d-flex align-items-center">
+                {% if request.user.is_authenticated %}
+                    <li class="nav-item mx-1">
+                        <a class="btn custom-btn" href="{% url 'hotel:update' %}">آپدیت کاربر</a>
+                    </li>
+                    <li class="nav-item mx-1">
+                        <a class="btn custom-btn" href="{% url 'hotel:update_password' %}">آپدیت رمز</a>
+                    </li>
+                    <li class="nav-item mx-1">
+                        <a class="btn custom-btn" href="{% url 'hotel:reservation_status' %}">رزروهای من</a>
+                    </li>
+                    <li class="nav-item mx-1">
+                        <a class="btn custom-btn-danger" href="{% url 'hotel:logout' %}">خروج</a>
+                    </li>
+
+                {% else %}
+                    <li class="nav-item mx-1">
+                        <a class="btn custom-btn" href="{% url 'hotel:login' %}">ورود</a>
+                    </li>
+                    <li class="nav-item mx-1">
+                        <a class="btn custom-btn" href="{% url 'hotel:register' %}">ثبت‌نام</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<br/>
+
+
+
+<!-- 💬 Messages -->
+<div class="container mt-3">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<!-- 📦 Main Content -->
+<main class="container py-4">
+    {% block content %}
+    {% endblock %}
+</main>
+
+<!-- ⚓ Footer -->
+<footer class="text-center py-3 mt-5 text-white"
+        style="background: linear-gradient(135deg, #5c3b23, #8b5e3c); box-shadow: 0 -2px 10px rgba(0,0,0,0.15);">
+    <small>
+        © 2025 تمامی حقوق محفوظ است — طراحی شده توسط
+        <strong>مهدی نصیرسلطانی</strong> |
+        <span class="text-light">📞 شماره تماس: 09911327751</span>
+    </small>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- 🌟 Custom Styles -->
+<style>
+/* Elegant brown gradient background */
+.custom-navbar {
+    background: linear-gradient(135deg, #4E2C11 0%, #7B4A21 50%, #5A3518 100%);
+    transition: all 0.6s ease;
+    animation: slideDown 0.8s ease;
+    z-index: 1000;
+}
+
+/* Slide-down animation for navbar */
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-50px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Golden brand text */
+.text-gold {
+    color: #d4af37 !important;
+    transition: color 0.3s ease;
+}
+.text-gold:hover {
+    color: #ffdd77 !important;
+}
+
+/* Nav link hover underline animation */
+.nav-link {
+    position: relative;
+    transition: color 0.3s ease;
+}
+.nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background-color: #d4af37;
+    transition: width 0.3s ease;
+}
+.nav-link:hover {
+    color: #ffd97a !important;
+}
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* 🔘 Button styles */
+.custom-btn {
+    border: 1px solid #d4af37;
+    color: #d4af37;
+    background: transparent;
+    border-radius: 10px;
+    padding: 6px 16px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+.custom-btn:hover {
+    background-color: #d4af37;
+    color: #3b240f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3);
+}
+
+/* 🔴 Danger (logout) button */
+.custom-btn-danger {
+    border: 1px solid #b23b3b;
+    color: #ff7b7b;
+    background: transparent;
+    border-radius: 10px;
+    padding: 6px 16px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+.custom-btn-danger:hover {
+    background-color: #b23b3b;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(178, 59, 59, 0.3);
+}
+
+/* Add a shadow when scrolling */
+.navbar-scrolled {
+    background: linear-gradient(135deg, #3a1e0b 0%, #5c3317 50%, #3a1e0b 100%);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+</style>
+
+<!-- 🧠 Navbar scroll animation JS -->
+<script>
+document.addEventListener("scroll", () => {
+    const navbar = document.querySelector(".custom-navbar");
+    if (window.scrollY > 50) {
+        navbar.classList.add("navbar-scrolled");
+    } else {
+        navbar.classList.remove("navbar-scrolled");
+    }
+});
+</script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

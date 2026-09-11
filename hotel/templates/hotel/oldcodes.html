@@ -1,0 +1,452 @@
+<!-- index -->
+{% extends 'hotel/base.html' %}
+{% block content %}
+
+<h1>Rooms</h1>
+{% if request.user.is_authenticated %}
+    <a href="{% url 'hotel:reservation_status' %}">برای بررسی رزروهای خود کلیک کنید</a>
+{% endif %}
+<br/>
+    {% for room in room_list %}
+        <a href="{% url 'hotel:detail' room.id %}"><img src="{{ room.image.url }}"></a>
+        <a href="{% url 'hotel:detail' room.id %}"><h1>{{ room.name }}</h1></a>
+        {% if room.has_discount %}
+            <h4>{{ room.price_with_discount }}</h4>
+        {% else %}
+            <h4>{{ room.price_per_night }}</h4>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
+<!-- **************************************** -->
+
+<!-- base -->
+
+<!DOCTYPE html>
+<html lang="fa" dir="ltr">
+{% load static %}
+<head>
+  <title>Hana OnlineShop</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="author" content="TemplatesJungle">
+  <meta name="keywords" content="ecommerce,fashion,store">
+  <meta name="description" content="Bootstrap 5 Fashion Store HTML CSS Template">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/vendor.css'%}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+
+  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css'%}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Marcellus&display=swap"
+    rel="stylesheet">
+   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+
+  {% if messages %}
+    {% for message in messages %}
+<div class="alert text-center" role="alert"
+     style="background: linear-gradient(135deg, #ff4d4d, #b30000);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            padding: 15px 20px;">
+    {{ message }}
+</div>
+    {% endfor %}
+  {% endif %}
+
+{% block content %}
+
+{% endblock %}
+  {% if messages %}
+    {% for message in messages %}
+  <div class="alert text-center" role="alert"
+     style="background: linear-gradient(135deg, #ff4d4d, #b30000);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            padding: 15px 20px;">
+    {{ message }}
+</div>
+    {% endfor %}
+  {% endif %}
+
+</body>
+
+<footer id="footer" class="mt-5" style="background: linear-gradient(135deg, #b30000, #ff4d4d); color: #fff; border-radius: 20px 20px 0 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.2);">
+  <div class="container">
+    <div class="row d-flex flex-wrap justify-content-between py-5">
+
+      <!-- Logo + Social -->
+      <div class="col-md-3 col-sm-6 mb-4">
+        <div class="footer-menu footer-menu-001 text-center">
+          <div class="footer-intro mb-4">
+            <a href="index.html">
+              <img src="{% static 'images/HANA.PNG' %}" alt="logo" width="70" height="70" style="border-radius:50%; border: 3px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+            </a>
+          </div>
+          <h6 style="font-weight:bold; color:#fff;">لوازم آرایشی بهداشتی هانا</h6>
+
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="col-md-3 col-sm-6 mb-4">
+        <div class="footer-menu footer-menu-002">
+          <h5 class="widget-title text-uppercase mb-4" style="color:#fff; font-weight:bold; border-bottom:2px solid #fff; display:inline-block; padding-bottom:5px;">لینک های سریع</h5>
+          <ul class="menu-list list-unstyled fs-6" style="line-height:2;">
+            <li><a href="{% url 'hotel:index' %}" style="text-decoration:none; color:#fff; transition:0.3s;">خانه</a></li>
+            <li><a href="{% url 'hotel:about' %}" style="text-decoration:none; color:#fff; transition:0.3s;">درباره‌ی ما</a></li>
+
+          </ul>
+        </div>
+      </div>
+
+      <!-- Contact -->
+      <div class="col-md-3 col-sm-6 mb-4">
+        <div class="footer-menu footer-menu-004">
+          <h5 class="widget-title text-uppercase mb-4" style="color:#fff; font-weight:bold; border-bottom:2px solid #fff; display:inline-block; padding-bottom:5px;">ارتباط با ما</h5>
+          <h6>انتقادی پیشنهادی؟</h6>
+          <h6><a href="mailto:hanaoonlineshop94@gmail.com" style="color:#fff; text-decoration:none;">hanaonlineshop94@gmail.com</a></h6>
+          <h6>برای راهنمایی زنگ بزن</h6>
+          <h6><a href="tel:04134407631" style="color:#fff; text-decoration:none;">04134407631</a></h6>
+          <h6><a href="tel:09330134848" style="color:#fff; text-decoration:none;">09330134848</a></h6>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Bar -->
+  <div style="background:#fff; color:#b30000; border-radius:0 0 20px 20px; padding:15px 0; box-shadow:0 -2px 10px rgba(0,0,0,0.15);">
+    <div class="container">
+      <div class="row text-center text-md-start">
+        <div class="col-md-6 mb-2">
+          <h6 style="margin:0; font-weight:bold;">توسعه‌داده شده توسط</h6>
+          <h6 style="margin:0;">مهدی نصیرسلطانی</h6>
+        </div>
+        <div class="col-md-6">
+          <h6 style="margin:0; font-weight:bold;">شماره تماس</h6>
+          <h6 style="margin:0;">989911327751+</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+  <script src="{% static 'js/plugins.js' %}"></script>
+  <script src="{% static 'js/SmoothScroll.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+  <script src="{% static 'js/script.min.js' %}"></script>
+</html>
+
+<!-- ******************************************** -->
+
+{% extends 'hotel/base.html' %}
+
+{% block content %}
+
+<!-- reservation form -->
+<h2>Reservation</h2>
+    <form action="{% url 'hotel:reservation' room.id %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Reserve">
+    </form>
+{% endblock %}
+
+<!-- ********************************************* -->
+
+<script>
+  $(document).ready(function() {
+    // Activate Jalali datepickers for both fields
+    $("#id_reservation_date_start").persianDatepicker({
+      format: "YYYY/MM/DD",
+      initialValue: false,
+      autoClose: true,
+      toolbox: { calendarSwitch: { enabled: true } },
+      observer: true,
+      theme: 'light'
+    });
+
+    $("#id_reservation_date_end").persianDatepicker({
+      format: "YYYY/MM/DD",
+      initialValue: false,
+      autoClose: true,
+      toolbox: { calendarSwitch: { enabled: true } },
+      observer: true,
+      theme: 'light'
+    });
+  });
+   $(document).ready(function() {
+    const reservedDays = JSON.parse('{{ reserved_days|escapejs }}'); // list from Django
+
+    function isReserved(date) {
+      const formatted = date.format("YYYY/MM/DD");
+      return reservedDays.includes(formatted);
+    }
+
+    $("#id_reservation_date_start").persianDatepicker({
+      format: "YYYY/MM/DD",
+      initialValue: false,
+      autoClose: true,
+      observer: true,
+      toolbox: { calendarSwitch: { enabled: true } },
+      checkDate: function (unix) {
+        const date = new persianDate(unix);
+        return !isReserved(date);  // disable reserved days
+      }
+    });
+
+    $("#id_reservation_date_end").persianDatepicker({
+      format: "YYYY/MM/DD",
+      initialValue: false,
+      autoClose: true,
+      observer: true,
+      toolbox: { calendarSwitch: { enabled: true } },
+      checkDate: function (unix) {
+        const date = new persianDate(unix);
+        return !isReserved(date);
+      }
+    });
+  });
+</script>
+<!-- ************************************* -->
+
+{% extends 'hotel/base.html' %}
+
+{% block content %}
+<section id="billboard" class="py-5" style="background:#fff;">
+  <div class="container text-center">
+
+    <!-- Section Title -->
+    <h1 class="section-title mb-4" data-aos="fade-up"
+        style="color:#870000; font-family:'VAZIRmatn' !important; font-weight:bold; font-size:2rem;">
+      درباره‌ی ما
+    </h1>
+
+    <!-- About Content -->
+    <div class="row justify-content-center">
+      <div class="col-md-6" data-aos="fade-up" data-aos-delay="300" style="color:#444; line-height:1.8;">
+
+        <h4 style="color:#870000; font-weight:bold;">سهند کندوان</h4>
+        <br/>
+        <h6>09149194263</h6>
+        <h6>09141013194</h6>
+        <h6>بمدیریت نصیر فتح اللهی</h6>
+        <h6>تبریز، شهرستان اسکو، روستای کندوان، جنب هتل لاله کندوان</h6>
+        <br/>
+        <h6>شما می‌توانید رزروهای خود را به صورت آنلاین و حضوری انجام دهید</h6>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% endblock
+
+<!-- the code for the table that shows the reserved dates:
+
+<section class="py-5" style="background:#fff8f0;">
+  <div class="container text-center">
+    <h2 class="mb-4" style="color:#7b5e2d;">📅 روزهای رزرو شده</h2>
+    <div id="calendar-wrapper" class="d-flex flex-wrap justify-content-center gap-4"></div>
+  </div>
+</section>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jalaali-js/dist/jalaali.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const reservedDays = JSON.parse('{{ reserved_days|safe }}');
+    const wrapper = document.getElementById("calendar-wrapper");
+    const reservedSet = new Set(reservedDays);
+
+    // Get today's Jalali date
+    const today = new Date();
+    const j = jalaali.toJalaali(today.getFullYear(), today.getMonth() + 1, today.getDate());
+
+    // Create previous, current, and next month calendars
+    for (let offset = -1; offset <= 1; offset++) {
+      const temp = new Date(today.getFullYear(), today.getMonth() + offset, 1);
+      const { jy, jm } = jalaali.toJalaali(temp.getFullYear(), temp.getMonth() + 1, 1);
+      wrapper.appendChild(createMonthTable(jy, jm, reservedSet));
+    }
+
+    function createMonthTable(year, month, reservedSet) {
+      const monthNames = [
+        "فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور",
+        "مهر","آبان","آذر","دی","بهمن","اسفند"
+      ];
+
+      const firstDay = jalaali.toGregorian(year, month, 1);
+      const daysInMonth = jalaali.jalaaliMonthLength(year, month);
+      const firstDate = new Date(firstDay.gy, firstDay.gm - 1, firstDay.gd);
+      const startWeekday = (firstDate.getDay() + 1) % 7; // align Sat as first
+
+      const table = document.createElement("table");
+      table.className = "shadow-lg rounded-3 mx-auto";
+      table.style.background = "#fff";
+      table.style.borderCollapse = "collapse";
+      table.style.minWidth = "270px";
+      table.style.direction = "rtl";
+      table.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)";
+      table.style.borderRadius = "12px";
+      table.style.overflow = "hidden";
+
+      // Header
+      const caption = document.createElement("caption");
+      caption.textContent = monthNames[month - 1] + " " + year;
+      caption.style.background = "#b88a44";
+      caption.style.color = "#fff";
+      caption.style.padding = "10px";
+      caption.style.fontWeight = "600";
+      caption.style.borderTopLeftRadius = "12px";
+      caption.style.borderTopRightRadius = "12px";
+      caption.style.fontSize = "1.1rem";
+      table.appendChild(caption);
+
+      // Week header
+      const headerRow = document.createElement("tr");
+      const weekdays = ["ش", "ی", "د", "س", "چ", "پ", "ج"];
+      weekdays.forEach(d => {
+        const th = document.createElement("th");
+        th.textContent = d;
+        th.style.padding = "6px";
+        th.style.color = "#7b5e2d";
+        th.style.fontWeight = "600";
+        th.style.fontSize = "0.9rem";
+        headerRow.appendChild(th);
+      });
+      table.appendChild(headerRow);
+
+      // Days
+      let row = document.createElement("tr");
+      for (let i = 0; i < startWeekday; i++) {
+        row.appendChild(document.createElement("td"));
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const g = jalaali.toGregorian(year, month, d);
+        const jalaliStr = `${year}/${String(month).padStart(2, '0')}/${String(d).padStart(2, '0')}`;
+
+        const td = document.createElement("td");
+        td.textContent = d;
+        td.style.padding = "8px";
+        td.style.textAlign = "center";
+        td.style.border = "1px solid #eee";
+        td.style.fontWeight = "500";
+        td.style.cursor = "default";
+        td.style.transition = "all 0.2s ease";
+
+        if (reservedSet.has(jalaliStr)) {
+          td.style.background = "#b88a44";
+          td.style.color = "#fff";
+          td.style.fontWeight = "600";
+          td.style.borderRadius = "8px";
+          td.title = "رزرو شده";
+        } else {
+          td.onmouseover = () => td.style.background = "#f5e8d0";
+          td.onmouseout = () => td.style.background = "transparent";
+        }
+
+        row.appendChild(td);
+
+        if ((startWeekday + d) % 7 === 0 || d === daysInMonth) {
+          table.appendChild(row);
+          row = document.createElement("tr");
+        }
+      }
+      return table;
+    }
+  });
+</script>
+
+-->
+
+<!-- update user
+{% extends 'hotel/base.html' %}
+
+{% block content %}
+
+<section id="billboard" class="py-5" style="background-color: #ffffff;">
+  <div class="container">
+    <div class="row justify-content-center">
+      <h1 class="section-title text-center mt-4" data-aos="fade-up" style="color:#333; font-weight:bold;">
+        تغییر اطلاعات پروفایل
+      </h1>
+      <div class="col-md-6 text-center" data-aos="fade-up" data-aos-delay="300"
+           style="background:#fff; padding:30px; border-radius:15px; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+
+        <form method="POST" action="{% url 'hotel:update' %}" style="text-align:center;">
+          {% csrf_token %}
+          <div style="text-align:center;">
+            {{ user_form.as_p }}
+          </div>
+          <button type="submit" class="btn btn-primary"
+                  style="padding:10px 25px; font-size:16px; border-radius:8px; margin-top:15px;">
+            تغییر اطلاعات
+          </button>
+        </form>
+
+        <br/><br/>
+        <a href="{% url 'hotel:update_password' %}" class="btn btn-secondary"
+           style="padding:10px 25px; font-size:16px; border-radius:8px;">
+          تغییر رمز
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+-->
+
+
+<!-- update pass
+
+{% extends 'hotel/base.html' %}
+
+{% block content %}
+
+<section id="billboard" class="py-5" style="background-color: #f8f9fa;">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card shadow-sm border-0" style="background-color: #ffffff; padding: 2rem;">
+          <h1 class="section-title text-center mb-4" data-aos="fade-up" style="color: #333;">تغییر رمز کاربر</h1>
+          <form method="POST" action="{% url 'hotel:update_password' %}" data-aos="fade-up" data-aos-delay="300">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="text-center mt-3">
+              <button type="submit" class="btn btn-dark border border-secondary px-4 py-2" style="color: #fff;">تغییر رمز</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+-->

@@ -1,0 +1,201 @@
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap');
+
+:root {
+  --ink: #14201d;
+  --ink-soft: #3c4a45;
+  --paper: #faf7f0;
+  --surface: #ffffff;
+  --pine: #163a32;
+  --pine-light: #23574c;
+  --gold: #b8863f;
+  --gold-light: #e2c07f;
+  --line: #e6e0d2;
+  --danger: #a8402c;
+  --danger-bg: #fbeae6;
+  --r-lg: 18px;
+  --r-md: 12px;
+  --r-sm: 8px;
+  --sh-1: 0 1px 2px rgba(20, 20, 15, 0.04), 0 1px 1px rgba(20, 20, 15, 0.03);
+  --sh-2: 0 12px 28px rgba(20, 30, 25, 0.10);
+  --sh-3: 0 24px 60px rgba(20, 30, 25, 0.16);
+  --font: "Vazirmatn", "Segoe UI", Tahoma, system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  background-image:
+    radial-gradient(circle at 15% 0%, rgba(184, 134, 63, 0.06), transparent 45%),
+    radial-gradient(circle at 85% 10%, rgba(22, 58, 50, 0.05), transparent 40%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--font);
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+h1, h2, h3, h4 {
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.25;
+  margin: 0 0 0.85rem;
+  letter-spacing: -0.015em;
+}
+h1 {
+  font-size: 2.5rem;
+  padding-top: 2.5rem;
+  position: relative;
+}
+h1::before {
+  content: "";
+  display: block;
+  width: 46px;
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  margin-bottom: 1.1rem;
+}
+h2 {
+  font-size: 1.55rem;
+  margin-top: 3rem;
+}
+h3 { font-size: 1.15rem; color: var(--pine); }
+
+p { margin: 0 0 0.8rem; color: var(--ink-soft); }
+
+a { color: var(--pine-light); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Navbar styling now lives in src/styles/nav.module.css, imported directly
+   by the Nav component in App.jsx. */
+
+/* ---------- Buttons ---------- */
+button, .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--pine), var(--pine-light));
+  color: #fdfbf6;
+  border: none;
+  border-radius: 999px;
+  padding: 0.8rem 1.85rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: var(--sh-1);
+  transition: box-shadow 0.25s ease, transform 0.15s ease, background 0.25s ease;
+}
+button:hover, .btn:hover {
+  box-shadow: var(--sh-2);
+  transform: translateY(-2px);
+  text-decoration: none;
+  background: linear-gradient(135deg, var(--pine-light), var(--pine));
+}
+button:active, .btn:active { transform: translateY(0) scale(0.97); }
+button:disabled {
+  background: var(--line);
+  color: #9a978a;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+nav button {
+  background: transparent;
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 0.5rem 1.1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  box-shadow: none;
+}
+nav button:hover {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--sh-1);
+}
+
+/* ---------- Forms ---------- */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  max-width: 460px;
+  background: var(--surface);
+  padding: 2.25rem;
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-2);
+  border: 1px solid var(--line);
+}
+input, textarea, select {
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 0.8rem 1rem;
+  border: 1.5px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--paper);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--gold);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(184, 134, 63, 0.14);
+}
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+/* ---------- Table (reservations) ---------- */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--sh-2);
+  border: 1px solid var(--line);
+  margin-top: 1.5rem;
+}
+th, td {
+  text-align: right;
+  padding: 1rem 1.3rem;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.9rem;
+}
+th {
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+tr { transition: background 0.15s ease; }
+tbody tr:hover td { background: rgba(184, 134, 63, 0.05); }
+tr:last-child td { border-bottom: none; }

@@ -1,0 +1,44 @@
+{% extends 'hotel/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Card wrapper -->
+    <div class="card shadow-lg rounded-3 overflow-hidden" style="background-color: #f3e7d5;">
+        <!-- Image -->
+        <img src="{{ weblog.blog_image.url }}" alt="{{ weblog.title }}" 
+             class="card-img-top" 
+             style="width:100%; height:auto; max-height:450px; object-fit:cover;">
+
+        <!-- Content -->
+        <div class="card-body" style="color:#4b2e1e; font-family:'Vazir', sans-serif;">
+            <!-- Title -->
+            <h2 class="card-title text-center mb-3" style="font-weight:700; color:#6b3e1a;">
+                {{ weblog.title }}
+            </h2>
+
+            <!-- Body -->
+            <div class="card-text" style="line-height:1.8; font-size:1.1rem;">
+                {{ weblog.body|linebreaks }}
+            </div>
+        </div>
+
+        <!-- Footer / Back button -->
+        <div class="card-footer text-center" >
+            <a href="{% url 'hotel:weblog' %}"
+            class="btn" style="
+                background: linear-gradient(135deg, #8b5a2b, #b8860b);
+                color: #fff8e7;
+                border-radius: 10px;
+                padding: 8px 20px;
+                font-weight: 600;
+                font-size: 0.9rem;
+                box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+                transition: all 0.3s ease;
+              " onmouseover="this.style.boxShadow='0 6px 12px rgba(138,99,41,0.3)'; this.style.opacity='0.9'" onmouseout="this.style.boxShadow='0 3px 8px rgba(0,0,0,0.15)'; this.style.opacity='1'"> 
+                بازگشت به بلاگ‌ها
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

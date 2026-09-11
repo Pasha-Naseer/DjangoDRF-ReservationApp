@@ -1,0 +1,166 @@
+{% extends "hotel/base.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}اتاق‌ها{% endblock %}
+
+{% block content %}
+
+<!-- 🖼️ Wallpaper Box -->
+<section class="container my-5">
+    <div class="position-relative overflow-hidden rounded-4 shadow-sm"
+         style="height: 400px; background-color: #000;">
+        <img src="{% static 'images/kandovan4.jpg' %}"
+             alt="هتل"
+             class="position-absolute top-50 start-50 translate-middle w-100 h-100"
+             style="object-fit: cover; object-position: center; border-radius: 16px; filter: brightness(90%);">
+        <div class="position-absolute top-50 start-50 translate-middle text-center text-white">
+            <h2 class="fw-bold display-6 mb-2"></h2>
+            <p class="small text-light mb-0"></p>
+        </div>
+    </div>
+</section>
+
+<div class="row">
+    {% for room in room_list %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <a href="{% url 'hotel:detail' room.id %}">
+                    <img src="{{ room.image.url }}" class="card-img-top" alt="اقامتگاه گردشگری کندوان خانه های سنگی">
+                </a>
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ room.name }}</h5>
+                    <p class="card-text">
+                        {% if room.has_discount %}
+                            <span class="text-success fw-bold">{{ room.price_with_discount|intcomma }}T</span>
+                            <span class="text-muted text-decoration-line-through fw-semibold text-gold fs-4">{{ room.price_per_night }}T</span>
+                        {% else %}
+                            <span class="fw-semibold">{{ room.price_per_night|intcomma }}T</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+<!-- 📍 About Kandovan Section -->
+<section class="container my-5">
+    <div class="row align-items-center bg-light rounded-4 shadow-sm p-4">
+        <div class="col-md-6">
+            <img src="{% static 'images/persian_blend.png' %}"
+                 alt="روستای کندوان"
+                 class="img-fluid rounded-4 shadow-sm"
+                 style="object-fit: cover;">
+        </div>
+        <div class="col-md-6 mt-4 mt-md-0">
+            <h3 class="fw-bold mb-3 text-brown">درباره کندوان</h3>
+            <p class="text-muted" style="text-align: justify; line-height: 2;">
+                روستای کندوان، یکی از شگفت‌انگیزترین جاذبه‌های طبیعی و تاریخی ایران است که در دل کوه‌های سهند و در نزدیکی شهر تبریز قرار دارد.
+                خانه‌های این روستا در دل صخره‌های مخروطی شکل حفر شده‌اند و بیش از ۷۰۰ سال قدمت دارند.
+                کندوان به دلیل معماری خاص و سبک زندگی منحصربه‌فرد ساکنانش، یکی از معدود روستاهای صخره‌ای زنده در جهان به شمار می‌رود.
+                هوای پاک، چشمه‌های آب معدنی، و طبیعت سرسبز اطراف، آن را به مقصدی محبوب برای گردشگران تبدیل کرده است.
+            </p>
+        </div>
+    </div>
+</section>
+</div>
+<br/>
+<div class="container mt-5 mb-5">
+  <h1 class="text-center mb-4" style="
+    font-family: 'Vazirmatn', sans-serif;
+    color: #5e3b1f;
+    font-weight: 700;
+  ">
+   وبلاگ‌ها
+  </h1>
+
+  <div class="row justify-content-center gx-0"> <!-- remove horizontal gutters -->
+    {% for weblog in weblogs %}
+      <div class="col-sm-10 col-md-6 col-lg-4 mb-4 px-0"> <!-- remove side padding -->
+        <div class="card shadow-lg border-0 mx-auto" style="
+          background: #f9f5f0;
+          border-radius: 16px;
+          overflow: hidden;
+          max-width: 380px;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        " onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 20px rgba(94,59,31,0.2)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 6px 12px rgba(0,0,0,0.1)'">
+          
+          <!-- Image -->
+           <a href="{% url 'hotel:weblog_detail' weblog.id %}">
+          <img src="{{ weblog.blog_image.url }}" alt="{{ weblog.name }}" style="
+            width: 100%;
+            height: auto;
+            max-height: 220px;
+            object-fit: cover;  /* fills the card */
+            display: block;
+          " >
+           </a>
+
+          <!-- Text & Button Area -->
+          <div class="card-body text-center" style="
+            direction: rtl;
+            font-family: 'Vazirmatn', sans-serif;
+            background: linear-gradient(180deg, #ede1d2 0%, #f5e8da 100%);
+            color: #4b2e16;
+            padding: 18px;
+            border-top: 1px solid #d6c0a8;
+          " >
+            <h2 style="
+              color: #6b441f;
+              font-size: 1rem;
+              font-weight: 600;
+              margin-bottom: 0.75rem;
+              text-align: center; /* center title */
+            ">
+              {{ weblog.title }}
+            
+            </h2>
+
+            <p style="
+              color: #4b2e16;
+              line-height: 1.8;
+              font-size: 0.95rem;
+              white-space: pre-line;
+              min-height: 90px;
+              margin-bottom: 1rem;
+              text-align: justify;
+            ">
+              {{ weblog.summary }}...
+            
+            </p>
+            <br/>
+            <div>
+              <a href="{% url 'hotel:weblog_detail' weblog.id %}" class="btn" style="
+                background: linear-gradient(135deg, #8b5a2b, #b8860b);
+                color: #fff8e7;
+                border-radius: 10px;
+                padding: 8px 20px;
+                font-weight: 600;
+                font-size: 0.9rem;
+                box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+                transition: all 0.3s ease;
+              " onmouseover="this.style.boxShadow='0 6px 12px rgba(138,99,41,0.3)'; this.style.opacity='0.9'" onmouseout="this.style.boxShadow='0 3px 8px rgba(0,0,0,0.15)'; this.style.opacity='1'">
+                مطالعه بیشتر
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+     <a href="{% url 'hotel:weblog' %}" class="btn" style="
+                background: linear-gradient(135deg, #8b5a2b, #b8860b);
+                color: #fff8e7;
+                border-radius: 10px;
+                padding: 8px 20px;
+                font-weight: 600;
+                font-size: 0.9rem;
+                box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+                transition: all 0.3s ease;
+              " onmouseover="this.style.boxShadow='0 6px 12px rgba(138,99,41,0.3)'; this.style.opacity='0.9'" onmouseout="this.style.boxShadow='0 3px 8px rgba(0,0,0,0.15)'; this.style.opacity='1'">
+                همه‌ی وبلاگ‌ها
+              </a>
+  </div>
+</div>
+
+
+
+{% endblock %}

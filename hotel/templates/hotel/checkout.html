@@ -1,0 +1,187 @@
+{% extends 'hotel/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+<div class="checkout-container">
+  <div class="lux-card">
+
+    <!-- ================= TITLE ================= -->
+    <h2 class="checkout-title">
+      بارگذاری رسید پرداخت
+    </h2>
+
+    <!-- ================= RESERVATION SUMMARY ================= -->
+    <div class="reservation-summary">
+      <h5>جزئیات رزرو شما</h5>
+      <p>از تاریخ: {{ reservation.calculate_jalali_start }}</p>
+      <p>تا تاریخ: {{ reservation.calculate_jalali_end }}</p>
+      <p>تعداد شب‌ها: {{ reservation.total_days }}</p>
+      <p class="final-price">
+        مبلغ نهایی: <span>{{ reservation.total_price|intcomma }} تومان</span>
+      </p>
+    </div>
+
+    <!-- ================= CREDIT CARD MOCKUP ================= -->
+    <div class="credit-card-preview">
+      <img src="{% static 'images/credit-card.png' %}" alt="Credit Card">
+    </div>
+
+    <!-- ================= FORM ================= -->
+    <form method="post" enctype="multipart/form-data" class="checkout-form">
+      {% csrf_token %}
+
+      <div class="mb-4 text-center">
+        <label class="form-label custom-label">
+          تصویر رسید پرداخت
+        </label>
+        <input type="file" name="receipt" class="form-control custom-input">
+      </div>
+
+      <div class="text-center mt-4">
+        <button type="submit" class="lux-btn">
+          ثبت نهایی رزرو
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<!-- ================= STYLE ================= -->
+<style>
+
+/* ===== Container Centering ===== */
+.checkout-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 15px;
+  min-height: calc(100vh - 100px);
+  background: linear-gradient(180deg, #fff8f0 0%, #f4e6d6 100%);
+}
+
+/* ===== Lux Card ===== */
+.lux-card{
+  max-width: 650px;
+  width: 100%;
+  background: linear-gradient(145deg, #f3e4d4, #e9dac7);
+  padding: 40px 35px;
+  border-radius: 22px;
+  box-shadow: 0 25px 60px rgba(94,59,31,0.18);
+  border: 1px solid rgba(184,134,11,0.25);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.lux-card:hover{
+  transform: translateY(-5px);
+  box-shadow: 0 35px 70px rgba(94,59,31,0.25);
+}
+
+/* ===== Checkout Title ===== */
+.checkout-title{
+  font-family:'Vazirmatn';
+  color:#5e3b1f;
+  font-weight: 800;
+  margin-bottom: 35px;
+  font-size: 1.8rem;
+}
+
+/* ===== Reservation Summary ===== */
+.reservation-summary{
+  background: linear-gradient(145deg, #f1e2d0, #e6d2bb);
+  padding: 25px 20px;
+  border-radius: 18px;
+  border:1px solid #d2b48c;
+  color: #4b2e16;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+  margin-bottom: 30px;
+  text-align: right;
+}
+
+.reservation-summary h5{
+  font-weight:700;
+  margin-bottom: 15px;
+  color:#5e3b1f;
+  font-size: 1.2rem;
+}
+
+.reservation-summary p{
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.final-price{
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-top: 12px;
+}
+
+.final-price span{
+  color:#8b5a2b;
+  font-size: 1.5rem;
+}
+
+/* ===== Credit Card Preview ===== */
+.credit-card-preview{
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.credit-card-preview img{
+  width: 100%;
+  max-width: 400px;
+  border-radius: 18px;
+  box-shadow:0 18px 45px rgba(0,0,0,0.22);
+  transition: transform 0.4s ease;
+}
+
+.credit-card-preview img:hover{
+  transform: scale(1.05);
+}
+
+/* ===== Form Fields ===== */
+.custom-label{
+  color:#4b2e16;
+  font-weight:600;
+  display:block;
+  margin-bottom:8px;
+}
+
+.custom-input{
+  border-radius:14px;
+  border:1px solid #d4b48c;
+  padding:12px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.custom-input:focus{
+  border-color:#b8860b;
+  box-shadow: 0 0 0 0.2rem rgba(184,134,11,0.25);
+  outline: none;
+}
+
+/* ===== Submit Button ===== */
+.lux-btn{
+  background: linear-gradient(135deg, #8b5a2b, #b8860b);
+  color:white;
+  padding: 14px 40px;
+  border-radius: 16px;
+  font-weight:700;
+  border:none;
+  font-size:1.1rem;
+  transition: all 0.3s ease;
+}
+
+.lux-btn:hover{
+  background: linear-gradient(135deg, #6e431f, #a6780c);
+  transform: translateY(-2px);
+}
+
+</style>
+
+{% endblock %}

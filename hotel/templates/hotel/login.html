@@ -1,0 +1,75 @@
+{% extends 'hotel/base.html' %}
+
+{% block content %}
+
+<section id="billboard" class="py-5" style="background:#f5f0eb;">
+  <div class="container">
+    <div class="row justify-content-center">
+
+      <!-- Title -->
+      <h1 class="section-title text-center mt-4 mb-4" data-aos="fade-up"
+          style="color:#5a381e; font-weight:bold; letter-spacing:1px; font-family:'Vazir', sans-serif;">
+        ورود به حساب
+      </h1>
+
+
+      <!-- Login Card -->
+      <div class="col-md-6 text-center" data-aos="fade-up" data-aos-delay="300"
+           style="background:#fff7f0; padding:40px; border-radius:20px;
+                  box-shadow:0 8px 25px rgba(90,56,30,0.15);">
+
+        <form method="POST" action="{% url 'hotel:login' %}">
+          {% csrf_token %}
+
+          <!-- Username -->
+          <div class="form-group mb-4">
+            <input type="text" class="form-control" placeholder="نام کاربری" name="username"
+                   style="text-align:center; direction:rtl; border-radius:12px; padding:14px;
+                          border:1px solid #d6bfa7; background:#fff4ee; color:#5a381e;
+                          font-weight:500; transition:0.3s; font-family:'Vazir', sans-serif;">
+          </div>
+
+          <!-- Password -->
+          <div class="form-group mb-4">
+            <input type="password" class="form-control" placeholder="رمز" name="password"
+                   style="text-align:center; direction:rtl; border-radius:12px; padding:14px;
+                          border:1px solid #d6bfa7; background:#fff4ee; color:#5a381e;
+                          font-weight:500; transition:0.3s; font-family:'Vazir', sans-serif;">
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit"
+                  style="background:linear-gradient(145deg, #c49a6c, #a77c4c); color:#fff;
+                         border:none; padding:14px 32px; border-radius:16px; font-weight:bold;
+                         box-shadow:0 6px 20px rgba(90,56,30,0.3); font-family:'Vazir', sans-serif;
+                         transition:0.3s;">
+            ورود
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Input focus effect
+  document.querySelectorAll("input").forEach(el => {
+    el.addEventListener("focus", () => el.style.borderColor = "#c49a6c");
+    el.addEventListener("blur", () => el.style.borderColor = "#d6bfa7");
+  });
+
+  // Button hover animation
+  const btn = document.querySelector("button[type='submit']");
+  btn.addEventListener("mouseover", () => {
+    btn.style.background = "linear-gradient(145deg, #a77c4c, #c49a6c)";
+    btn.style.transform = "translateY(-2px)";
+    btn.style.boxShadow = "0 8px 25px rgba(90,56,30,0.4)";
+  });
+  btn.addEventListener("mouseout", () => {
+    btn.style.background = "linear-gradient(145deg, #c49a6c, #a77c4c)";
+    btn.style.transform = "translateY(0)";
+    btn.style.boxShadow = "0 6px 20px rgba(90,56,30,0.3)";
+  });
+</script>
+
+{% endblock %}

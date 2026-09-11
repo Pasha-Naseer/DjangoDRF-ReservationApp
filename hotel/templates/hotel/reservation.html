@@ -1,0 +1,206 @@
+{% extends 'hotel/base.html' %}
+
+{% block content %}
+<style>
+  /* reserved day styling - Kandovan brown/gold look */
+  .reserved-day {
+    background-color: #b88a44 !important;
+    color: #fff !important;
+    border-radius: 6px !important;
+    opacity: 0.95 !important;
+    box-shadow: 0 2px 6px rgba(120,80,32,0.15) !important;
+  }
+</style>
+
+<section class="py-5" style="background:#fff8f0;">
+  <div class="container text-center">
+    <h2 class="mb-4" style="color:#7b5e2d;">📅 روزهای رزرو شده</h2>
+    <div id="calendar-wrapper" class="d-flex flex-wrap justify-content-center gap-4"></div>
+  </div>
+</section>
+
+<section class="py-5" style="background:#f8f4ee;">
+  <div class="container text-center">
+    <h2 class="mb-4" style="color:#7b5e2d;">📅 رزرو اتاق</h2>
+
+    <form action="{% url 'hotel:reservation' room.id %}" autocomplete="off" method="post" class="p-4 mx-auto shadow-lg rounded-3" style="max-width:500px; background:#fff;">
+      {% csrf_token %}
+
+      {{ form.as_p }}
+
+      <input type="submit" value="رزرو" class="btn btn-lg w-100 mt-3"
+             style="background:#b88a44; color:#fff; border:none; border-radius:12px; font-weight:600;">
+    </form>
+  </div>
+</section>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jalaali-js/dist/jalaali.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const reservedDays = JSON.parse('{{ reserved_days|safe }}');
+    const reservedSet = new Set(reservedDays);
+    const wrapper = document.getElementById("calendar-wrapper");
+
+    // Get today's Jalali date
+    const today = new Date();
+    const jToday = jalaali.toJalaali(today.getFullYear(), today.getMonth() + 1, today.getDate());
+
+    // Compute previous, current, and next month in Jalali
+    const monthsToShow = [];
+
+      for (let i = 0; i < 3; i++) {
+        let jm = jToday.jm + i;
+        let jy = jToday.jy;
+
+        if (jm > 12) {
+          jm -= 12;
+          jy += 1;
+        }
+
+        monthsToShow.push({ jy, jm });
+      }
+
+
+    monthsToShow.forEach(m => {
+      wrapper.appendChild(createMonthTable(m.jy, m.jm, reservedSet));
+    });
+
+    function createMonthTable(year, month, reservedSet) {
+      const monthNames = [
+        "فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور",
+        "مهر","آبان","آذر","دی","بهمن","اسفند"
+      ];
+
+      // Get first day of month in Gregorian to find weekday alignment
+      const firstDay = jalaali.toGregorian(year, month, 1);
+      const firstDate = new Date(firstDay.gy, firstDay.gm - 1, firstDay.gd);
+      const startWeekday = (firstDate.getDay() + 1) % 7; // make Saturday = 0
+      const daysInMonth = jalaali.jalaaliMonthLength(year, month);
+
+      // Create table
+      const table = document.createElement("table");
+      table.className = "shadow-lg rounded-3 mx-auto";
+      table.style.background = "#fff";
+      table.style.borderCollapse = "collapse";
+      table.style.minWidth = "270px";
+      table.style.direction = "rtl";
+      table.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)";
+      table.style.borderRadius = "12px";
+      table.style.overflow = "hidden";
+
+      // Caption
+      const caption = document.createElement("caption");
+      caption.textContent = monthNames[month - 1] + " " + year;
+      caption.style.background = "#b88a44";
+      caption.style.color = "#fff";
+      caption.style.padding = "10px";
+      caption.style.fontWeight = "600";
+      caption.style.borderTopLeftRadius = "12px";
+      caption.style.borderTopRightRadius = "12px";
+      caption.style.fontSize = "1.05rem";
+      table.appendChild(caption);
+
+      // Week headers
+      const headerRow = document.createElement("tr");
+      const weekdays = ["ش", "ی", "د", "س", "چ", "پ", "ج"];
+      weekdays.forEach(d => {
+        const th = document.createElement("th");
+        th.textContent = d;
+        th.style.padding = "6px";
+        th.style.color = "#7b5e2d";
+        th.style.fontWeight = "600";
+        th.style.fontSize = "0.9rem";
+        headerRow.appendChild(th);
+      });
+      table.appendChild(headerRow);
+
+      // Leading blanks
+      let row = document.createElement("tr");
+      for (let i = 0; i < startWeekday; i++) {
+        row.appendChild(document.createElement("td"));
+      }
+
+      // Days
+      for (let d = 1; d <= daysInMonth; d++) {
+        const jalaliStr = `${year}/${String(month).padStart(2, '0')}/${String(d).padStart(2, '0')}`;
+        const td = document.createElement("td");
+        td.textContent = d;
+        td.style.padding = "8px";
+        td.style.textAlign = "center";
+        td.style.border = "1px solid #eee";
+        td.style.fontWeight = "500";
+        td.style.cursor = "default";
+        td.style.transition = "all 0.12s ease";
+
+        if (reservedSet.has(jalaliStr)) {
+          td.style.background = "#b88a44";
+          td.style.color = "#fff";
+          td.style.fontWeight = "600";
+          td.style.borderRadius = "8px";
+          td.title = "رزرو شده";
+        } else {
+          td.onmouseover = () => td.style.background = "#f5e8d0";
+          td.onmouseout = () => td.style.background = "transparent";
+        }
+
+        row.appendChild(td);
+
+        if ((startWeekday + d) % 7 === 0 || d === daysInMonth) {
+          table.appendChild(row);
+          row = document.createElement("tr");
+        }
+      }
+
+      return table;
+    }
+  });
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/persian-date@1.1.0/dist/persian-date.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css"/>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const reservedDays = JSON.parse('{{ reserved_days|default:"[]"|safe }}');
+
+    function highlightReservedDays(input) {
+        setTimeout(() => {
+            const $calendar = $(input).siblings('.pdp-calendar, .pdp-container');
+            if (!$calendar.length) return;
+
+            const tds = $calendar[0].querySelectorAll('td[data-date]');
+            tds.forEach(td => {
+                const dateAttr = td.getAttribute('data-date');
+                if (!dateAttr) return;
+                const [y, m, d] = dateAttr.split(',');
+                const date = `${y}/${m.padStart(2,'0')}/${d.padStart(2,'0')}`;
+                if (reservedDays.includes(date)) td.classList.add('reserved-day');
+            });
+        }, 100);
+    }
+
+    function initPicker(id) {
+        const $input = $("#" + id);
+        $input.persianDatepicker({
+            format: "YYYY/MM/DD",
+            autoClose: true,
+            altField: null,
+            onSelect: function(unix) {
+                // Convert to formatted Jalali string manually
+                const pd = new persianDate(unix);
+                const formatted = pd.format("YYYY/MM/DD");
+                $input.val(formatted); // make sure input value is a string
+            },
+            onShow: function() { highlightReservedDays(this.el); },
+            onMonthChanged: function() { highlightReservedDays(this.el); }
+        });
+    }
+
+    initPicker("id_reservation_date_start");
+    initPicker("id_reservation_date_end");
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'hotel/base.html' %}
+
+{% block content %}
+
+<section id="billboard" class="py-5" style="background-color: #f8f9fa;">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card shadow-sm border-0" style="background-color: #ffffff; padding: 2rem;">
+          <h1 class="section-title text-center mb-4" data-aos="fade-up" style="color: #333;">ثبت نام</h1>
+          <h6 class="text-center mb-4" style="color: #555;">تا 3 دقیقه می توانید کد ارسالی را وارد کنید!</h6>
+          <form method="POST" action="{% url 'hotel:verify_code' %}" data-aos="fade-up" data-aos-delay="300">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="text-center mt-3">
+              <button type="submit" class="btn btn-light border border-secondary px-4 py-2" style="color: #333;">ثبت نام</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+{% endblock %}

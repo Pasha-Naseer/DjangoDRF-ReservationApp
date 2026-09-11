@@ -1,0 +1,72 @@
+{% extends 'hotel/base.html' %}
+
+{% block content %}
+
+<section id="about" class="py-5" style="background:#f5f0eb;">
+  <div class="container">
+    <div class="row justify-content-center">
+
+      <!-- Title -->
+
+
+      <!-- About Card -->
+      <div class="col-md-8 text-center" data-aos="fade-up" data-aos-delay="200"
+           style="background:#fff7f0; padding:40px; border-radius:20px;
+                  box-shadow:0 8px 25px rgba(90,56,30,0.15);">
+        <h3 class="section-title text-center mb-5" data-aos="fade-up"
+          style="color:#5a381e; font-weight:bold; letter-spacing:1px; font-family:'Vazir', sans-serif;">
+          سهند کندوان
+        </h3>
+        <p style="color:#5a381e; font-size:1.1rem; line-height:1.8; font-family:'Vazir', sans-serif;">
+          تبریز، شهرستان اسکو، روستای کندوان، جنب هتل لاله کندوان
+        </p>
+
+
+        <p style="color:#5a381e; font-size:1.1rem; line-height:1.8; font-family:'Vazir', sans-serif;">
+          خوش آمدید! بومگردی ما تجربه‌ای لوکس و آرامش‌بخش را برای مهمانان خود فراهم می‌کند.
+          تیم حرفه‌ای ما همواره آماده است تا اقامتی به‌یادماندنی را برای شما رقم بزند.
+        </p>
+
+
+        <p style="color:#5a381e; font-size:1.1rem; line-height:1.8; font-family:'Vazir', sans-serif;">
+          برای رزرو و اطلاعات بیشتر با شماره‌های زیر تماس بگیرید:
+        </p>
+
+        <!-- Phone Numbers -->
+        <div style="margin-top:25px;">
+          <a href="tel:+1234567890" style="display:inline-block; margin:10px; padding:12px 24px;
+             background:linear-gradient(145deg, #c49a6c, #a77c4c); color:#fff; border-radius:14px;
+             text-decoration:none; font-weight:bold; box-shadow:0 6px 20px rgba(90,56,30,0.3);
+             transition:0.3s; font-family:'Vazir', sans-serif;">
+            09149194263
+          </a>
+          <a href="tel:+0987654321" style="display:inline-block; margin:10px; padding:12px 24px;
+             background:linear-gradient(145deg, #c49a6c, #a77c4c); color:#fff; border-radius:14px;
+             text-decoration:none; font-weight:bold; box-shadow:0 6px 20px rgba(90,56,30,0.3);
+             transition:0.3s; font-family:'Vazir', sans-serif;">
+            09141013194
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Phone button hover animation
+  document.querySelectorAll('a[href^="tel"]').forEach(btn => {
+    btn.addEventListener("mouseover", () => {
+      btn.style.background = "linear-gradient(145deg, #a77c4c, #c49a6c)";
+      btn.style.transform = "translateY(-2px)";
+      btn.style.boxShadow = "0 8px 25px rgba(90,56,30,0.4)";
+    });
+    btn.addEventListener("mouseout", () => {
+      btn.style.background = "linear-gradient(145deg, #c49a6c, #a77c4c)";
+      btn.style.transform = "translateY(0)";
+      btn.style.boxShadow = "0 6px 20px rgba(90,56,30,0.3)";
+    });
+  });
+</script>
+
+{% endblock %}
