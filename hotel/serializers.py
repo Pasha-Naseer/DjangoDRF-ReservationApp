@@ -40,7 +40,10 @@ class RoomSerializer(serializers.ModelSerializer):
         return urls
 
 
+# ---- Reservations ---------------------------------------------------------
+
 class ReservationSerializer(serializers.ModelSerializer):
+    """Read-only representation, e.g. for 'my reservations' list."""
     room = RoomSerializer(read_only=True)
     total_days = serializers.SerializerMethodField()
     total_price = serializers.SerializerMethodField()
@@ -71,6 +74,14 @@ class ReservationSerializer(serializers.ModelSerializer):
 
 
 class ReservationValidateSerializer(serializers.Serializer):
+    """
+    Used by POST /api/reservations/validate/  (equivalent of the old
+    ReservationView.post() up to the point where it stashed
+    request.session['pending_reservation'] and redirected to checkout).
+
+    Returns the parsed Gregorian dates so the frontend can echo them back
+    unchanged when it later calls ReservationCreateSerializer at checkout.
+    """
     room_id = serializers.IntegerField()
     phone_number = serializers.CharField(max_length=11)
     first_name = serializers.CharField(max_length=200)
@@ -88,10 +99,31 @@ class ReservationValidateSerializer(serializers.Serializer):
         attrs["room"] = room
         attrs["_start_date"] = start_date
         attrs["_end_date"] = end_date
+
+        # Build an unsaved Reservation purely so we can reuse the model's own
+        # total_days()/total_price() methods (they only read self.room and
+        # self.reservation_date_start/end — no DB row needed) rather than
+        # duplicating that math here or in the frontend.
+        unsaved = Reservation(
+            room=room,
+            reservation_date_start=start_date,
+            reservation_date_end=end_date,
+        )
+        attrs["_total_days"] = unsaved.total_days()
+        attrs["_total_price"] = unsaved.total_price()
+
         return attrs
 
 
 class ReservationCreateSerializer(serializers.ModelSerializer):
+    """
+    Used by POST /api/reservations/  (multipart/form-data, requires auth +
+    a receipt file). Equivalent of the old CheckoutView.post().
+
+    Dates are accepted as Jalali strings again and re-validated server-side
+    (never trust the client's earlier /validate/ call) before the
+    Reservation row is actually created.
+    """
     reservation_date_start = serializers.CharField(write_only=True)
     reservation_date_end = serializers.CharField(write_only=True)
 
@@ -124,6 +156,8 @@ class ReservationCreateSerializer(serializers.ModelSerializer):
         )
 
 
+# ---- Auth / users -----------------------------------------------------------
+
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
@@ -137,6 +171,7 @@ class LoginSerializer(serializers.Serializer):
 
 
 class RegisterSerializer(serializers.Serializer):
+    """Step 1 of signup: validates + sends OTP. Does NOT create the user yet."""
     my_username = serializers.CharField(max_length=20)
     phone_number = serializers.CharField(max_length=11)
     my_email = serializers.EmailField()
@@ -161,6 +196,11 @@ class RegisterSerializer(serializers.Serializer):
 
 
 class VerifyCodeSerializer(serializers.Serializer):
+    """
+    Step 2 of signup. The frontend re-sends the registration fields it
+    collected in step 1 (kept in React state) together with the OTP code,
+    since there is no server-side session to read them back from.
+    """
     my_username = serializers.CharField(max_length=20)
     phone_number = serializers.CharField(max_length=11)
     my_email = serializers.EmailField()

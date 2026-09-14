@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import styles from "../styles/shared.module.css";
 
 import DatePicker from "react-multi-date-picker";
+import DateObject from "react-date-object";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 
@@ -20,21 +21,27 @@ function toJalaliKey(date) {
   return `${y}/${m}/${d}`;
 }
 
-// Returns true if any day strictly between start and end is already reserved.
-function rangeHitsReservedDay(start, end, reservedDays) {
-  let cursor = start.add(1, "day");
-  while (toJalaliKey(cursor) !== toJalaliKey(end)) {
-    if (reservedDays.includes(toJalaliKey(cursor))) return true;
-    cursor = cursor.add(1, "day");
-  }
-  return false;
+function toJalaliKeyFromTimestamp(ms) {
+  const d = new DateObject({ date: new Date(ms), calendar: persian, locale: persian_fa });
+  return toJalaliKey(d);
 }
 
-// Number of nights between two DateObjects, calendar-agnostic (just real
-// elapsed days), which is what total_price() on the backend charges for.
-function nightsBetween(start, end) {
-  const ms = end.toDate().getTime() - start.toDate().getTime();
-  return Math.round(ms / 86400000);
+// Checks every day strictly between start and end against reservedDays.
+// Uses a numeric day-count (via real elapsed milliseconds) as the loop
+// bound instead of comparing formatted date strings — the previous
+// version looped `cursor = cursor.add(1, "day")` until it string-matched
+// `end`, which never terminates (freezing the tab) if end isn't strictly
+// after start, e.g. equal dates or a reversed pair. A bounded numeric
+// loop can't hang no matter what order the two dates come in.
+function rangeOverlapsReserved(start, end, reservedDays) {
+  const startMs = start.toDate().getTime();
+  const endMs = end.toDate().getTime();
+  const diffDays = Math.round((endMs - startMs) / 86400000);
+  if (diffDays <= 0) return false; // same day or reversed — not a valid range at all, handled elsewhere
+  for (let i = 1; i < diffDays; i++) {
+    if (reservedDays.includes(toJalaliKeyFromTimestamp(startMs + i * 86400000))) return true;
+  }
+  return false;
 }
 
 export default function ReservationForm() {
@@ -45,7 +52,6 @@ export default function ReservationForm() {
   const [room, setRoom] = useState(null);
   const [reservedDays, setReservedDays] = useState([]);
   const [dateRange, setDateRange] = useState([]); // [DateObject, DateObject] once both picked
-  const [pickerKey, setPickerKey] = useState(0); // bumped to force a clean remount on rejection
   const [form, setForm] = useState({ phone_number: "", first_name: "", last_name: "" });
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -59,41 +65,18 @@ export default function ReservationForm() {
     apiFetch(`/rooms/${roomId}/reserved-days/`).then((d) => setReservedDays(d.reserved_days));
   }, [roomId, user, navigate]);
 
-  function rejectSelection(message) {
-    setError(message);
-    setDateRange([]);
-    // The picker keeps some click-progress state internally that isn't
-    // fully driven by the `value` prop, so resetting value alone can leave
-    // a reserved day looking "selected" instead of red. Changing `key`
-    // forces React to tear down and recreate the picker from scratch,
-    // guaranteeing a clean visual reset.
-    setPickerKey((k) => k + 1);
-  }
-
-  function handleRangeChange(value) {
-    if (value.length === 2 && rangeHitsReservedDay(value[0], value[1], reservedDays)) {
-      rejectSelection("این بازه شامل روز‌های رزرو شده است. لطفاً بازه دیگری انتخاب کنید.");
-      return;
-    }
-    setError(null);
-    setDateRange(value);
-  }
-
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  // inline `style` (not just a CSS class) is used because it can't lose a
-  // specificity fight with the library's own built-in day styling.
+  // Only disables direct clicks on a reserved day — doesn't touch the
+  // picker's own selection state, so it can't interfere with normal
+  // two-click range picking.
   function mapDays({ date }) {
     if (reservedDays.includes(toJalaliKey(date))) {
       return {
         disabled: true,
-        style: {
-          backgroundColor: "#a8402c",
-          color: "#fff",
-          borderRadius: "50%",
-        },
+        style: { backgroundColor: "#a8402c", color: "#fff", borderRadius: "50%" },
       };
     }
   }
@@ -104,6 +87,10 @@ export default function ReservationForm() {
 
     if (dateRange.length < 2) {
       setError("لطفاً تاریخ شروع و پایان اقامت را انتخاب کنید.");
+      return;
+    }
+    if (rangeOverlapsReserved(dateRange[0], dateRange[1], reservedDays)) {
+      setError("این بازه شامل روز‌های رزرو شده است. لطفاً بازه دیگری انتخاب کنید.");
       return;
     }
 
@@ -126,10 +113,6 @@ export default function ReservationForm() {
 
   if (!room) return <p>در حال بارگذاری...</p>;
 
-  const nights = dateRange.length === 2 ? nightsBetween(dateRange[0], dateRange[1]) : 0;
-  const nightlyRate = room.has_discount ? room.price_with_discount : Number(room.price_per_night);
-  const totalPrice = nights * nightlyRate;
-
   return (
     <div>
       <h1>رزرو {room.name}</h1>
@@ -143,26 +126,18 @@ export default function ReservationForm() {
         <label>
           بازه اقامت (شروع - پایان)
           <DatePicker
-            key={pickerKey}
             range
             calendar={persian}
             locale={persian_fa}
             format="YYYY/MM/DD"
             value={dateRange}
-            onChange={handleRangeChange}
+            onChange={setDateRange}
             mapDays={mapDays}
             minDate={new Date()}
             numberOfMonths={1}
             placeholder="انتخاب تاریخ"
           />
         </label>
-
-        {nights > 0 && (
-          <p className={styles.hint}>
-            {nights} شب × {nightlyRate.toLocaleString("en-US")} تومان ={" "}
-            <strong>{totalPrice.toLocaleString("en-US")} تومان</strong>
-          </p>
-        )}
 
         <button type="submit" disabled={submitting}>ادامه به پرداخت</button>
       </form>

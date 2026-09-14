@@ -52,6 +52,8 @@ export default function Checkout() {
         <li>نام: {pending.first_name} {pending.last_name}</li>
         <li>تلفن: {pending.phone_number}</li>
         <li>از {pending.reservation_date_start} تا {pending.reservation_date_end}</li>
+        <li>تعداد شب: {pending.total_days}</li>
+        <li>مبلغ کل: <strong>{Number(pending.total_price).toLocaleString("en-US")} تومان</strong></li>
       </ul>
       {error && <p className={styles.error}>{error}</p>}
       <form onSubmit={handleSubmit}>

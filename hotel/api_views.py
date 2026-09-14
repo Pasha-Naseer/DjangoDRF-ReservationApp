@@ -6,6 +6,8 @@ from rest_framework import generics, viewsets, status, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError
 
 from utils import send_otp_code
 from .models import Room, Reservation, OtpCode, User, Weblog
@@ -16,24 +18,33 @@ from .serializers import (
     VerifyCodeSerializer, UserSerializer, ChangePasswordSerializer,
     WeblogSerializer, WeblogListSerializer,
 )
-from rest_framework_simplejwt.exceptions import TokenError
-from rest_framework_simplejwt.tokens import RefreshToken
+
 OTP_LIFETIME = timedelta(hours=0, minutes=3, seconds=0)
 
 
 def _tokens_for(user):
     refresh = RefreshToken.for_user(user)
-    return {"refresh": str(refresh),
-            "access": str(refresh.access_token)}
+    return {"refresh": str(refresh), "access": str(refresh.access_token)}
 
+
+# ---- Rooms / weblog: read-only, public --------------------------------------
 
 class RoomViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    GET /api/rooms/            -> replaces index()'s room_list
+    GET /api/rooms/<id>/       -> replaces DetailView
+    """
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
     permission_classes = [permissions.AllowAny]
 
 
 class WeblogViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    GET /api/weblogs/          -> replaces weblog()
+    GET /api/weblogs/<id>/     -> replaces weblog_detail()
+    GET /api/weblogs/latest/   -> the 3-most-recent list index() showed
+    """
     queryset = Weblog.objects.all()
     permission_classes = [permissions.AllowAny]
 
@@ -44,15 +55,18 @@ class WeblogViewSet(viewsets.ReadOnlyModelViewSet):
 @api_view(["GET"])
 @permission_classes([permissions.AllowAny])
 def latest_weblogs(request):
-    weblogs = Weblog.objects.order_by("-pub_date")[:6]
+    weblogs = Weblog.objects.order_by("-pub_date")[:3]
     return Response(WeblogListSerializer(weblogs, many=True, context={"request": request}).data)
 
 
 @api_view(["GET"])
 @permission_classes([permissions.AllowAny])
 def room_reserved_days(request, room_id):
+    """GET /api/rooms/<room_id>/reserved-days/  -> feeds the calendar widget."""
     return Response({"reserved_days": reserved_days_for_room(room_id)})
 
+
+# ---- Reservations -------------------------------------------------------------
 
 class ReservationValidateView(APIView):
     """POST /api/reservations/validate/ — same checks as the old
@@ -70,6 +84,8 @@ class ReservationValidateView(APIView):
             "last_name": v["last_name"],
             "reservation_date_start": v["reservation_date_start"],
             "reservation_date_end": v["reservation_date_end"],
+            "total_days": v["_total_days"],
+            "total_price": v["_total_price"],
         })
 
 
@@ -88,6 +104,8 @@ class MyReservationsView(generics.ListAPIView):
     def get_queryset(self):
         return Reservation.objects.filter(user=self.request.user)
 
+
+# ---- Auth ---------------------------------------------------------------------
 
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -176,6 +194,7 @@ class VerifyCodeView(APIView):
 
 
 class MeView(generics.RetrieveUpdateAPIView):
+    """GET/PUT /api/auth/me/ — replaces user_update()."""
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
